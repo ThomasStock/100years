@@ -1,14 +1,20 @@
+import dayjs from 'dayjs'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLifeStore } from '../store'
-import { getSeed, setSeed } from '../store/seed'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+dayjs.extend(localizedFormat)
 
 const Home: NextPage = () => {
   const { random, getRandom } = useLifeStore()
-  const [asked, setAsked] = useState(false)
 
-  const seed = getSeed()
+  const dateString = random ? dayjs(random).format('LLLL') : ''
+
+  useEffect(() => {
+    getRandom()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
@@ -17,16 +23,12 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <h2>Seed: {seed}</h2>
-        <button onClick={() => setSeed(seed + 1)}>Set seed to {seed + 1}</button>
-        <br />
         <button
           onClick={() => {
-            setAsked(true)
             getRandom()
           }}
         >
-          {asked ? random : 'click to generate'}
+          {dateString}
         </button>
       </main>
     </>
